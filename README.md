@@ -21,6 +21,6 @@ The goal was to design a VGA controller from scratch on an  DE10-Lite FPGA to di
 ## 📁 Repository Structure
 * `/rtl`: VHDL source files (Controller, ROM, Clock Divider).
 * `/sim`: Simulation testbench for timing validation.
-* `/mif`: The memory initialization file containing the pixel data.
+* `/mif`: Memory initialization files for image storage.
 * `/doc`: Project documentation.
 
