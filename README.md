@@ -21,3 +21,5 @@ A custom VGA controller : The goal was to design a VGA controller from scratch o
 * `/rtl`: VHDL source files (Controller, ROM, Clock Divider).
 * `/sim`: Simulation testbench for timing validation.
 * `/mif`: The memory initialization file containing the pixel data.
+* `/doc`: Project documentation.
+
