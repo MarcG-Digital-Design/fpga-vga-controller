@@ -12,7 +12,7 @@ A custom VGA controller : The goal was to design a VGA controller from scratch o
 
 ## Technical skills
 * **Video Timing & Synchronization:** Precise implementation of VGA standards (640x480 @ 60Hz), including HSYNC, VSYNC, and Blanking intervals management.
-**Clock Management:** Use of PLLs to generate the required pixel clock frequency from the system master clock.
+* **Clock Management:** Use of PLLs to generate the required pixel clock frequency from the system master clock.
 * **Resource Optimization:** Use of embedded block RAM for image storage.
 * **Timing Constraints:** Adherence to standard VGA signaling protocols.
 * **Simulation:** Full verification of the video pipeline using testbenches.
