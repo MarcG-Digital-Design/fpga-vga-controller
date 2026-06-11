@@ -3,7 +3,8 @@
 # VGA Controller with ROM Image Display
 
 ## Overview
-A custom VGA controller : The goal was to design a VGA controller from scratch on an  DE10-Lite FPGA to display images stored in internal ROM.
+A custom VGA controller : 
+The goal was to design a VGA controller from scratch on an  DE10-Lite FPGA to display images stored in internal ROM.
 
 ## Architecture
 * **Memory Management:** The image data is converted into a `.mif` file and mapped into the FPGA's internal ROM.
