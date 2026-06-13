@@ -1,0 +1,27 @@
+# ---- GHDL build artifacts ----
+# Design library created by `ghdl -a`
+*.cf
+work-obj*.cf
+# Object files and elaborated simulation executables
+*.o
+# GHDL leaves the elaborated binary named after the top entity (no extension);
+# keep them out by ignoring the testbench executables explicitly.
+*_tb
+*_selfcheck_tb
+
+# ---- Simulation outputs ----
+*.vcd
+*.ghw
+*.fst
+*.fst.hier
+
+# ---- GTKWave ----
+*.gtkw.bak
+
+# ---- Editor / OS junk ----
+*~
+*.swp
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
