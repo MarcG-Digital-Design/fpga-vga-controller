@@ -54,12 +54,28 @@ begin
     -- Stimulus
     stim_process : process
     begin
-        -- Hold reset low for 4 clock cycles, then release
+        -- Phase 1 : hold reset low for 4 clock cycles, then release
         wait for CLK_PERIOD * 4;
         nRST <= '1';
         wait for CLK_PERIOD * 2;
 
-        -- 600 line pulses to cross the 524 -> 0 wrap and beyond
+        -- Phase 2 : 300 line pulses (counter climbs but does NOT wrap yet)
+        for i in 0 to 299 loop
+            wait until rising_edge(CLK);
+            HCOUNT_OVERFLOW <= '1';
+            wait until rising_edge(CLK);
+            HCOUNT_OVERFLOW <= '0';
+            wait for CLK_PERIOD * 6;
+        end loop;
+
+        -- Phase 3 : mid-run reset pulse, the counter must fall back to 0
+        wait for CLK_PERIOD * 4;
+        nRST <= '0';
+        wait for CLK_PERIOD * 4;
+        nRST <= '1';
+        wait for CLK_PERIOD * 4;
+
+        -- Phase 4 : 600 more pulses to also exercise the 524 -> 0 wrap
         for i in 0 to 599 loop
             wait until rising_edge(CLK);
             HCOUNT_OVERFLOW <= '1';

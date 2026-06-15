@@ -26,7 +26,7 @@ test:
 wave:
 	$(GHDL) -a $(GHDLFLAGS) $(RTL)/VSYNC_COUNT.vhd $(SIM)/VSYNC_COUNT_tb.vhd
 	$(GHDL) -e $(GHDLFLAGS) VSYNC_COUNT_tb
-	$(GHDL) -r $(GHDLFLAGS) VSYNC_COUNT_tb --vcd=vsync.vcd --stop-time=300us
+	$(GHDL) -r $(GHDLFLAGS) VSYNC_COUNT_tb --vcd=vsync.vcd --stop-time=1ms
 	gtkwave vsync.vcd
 
 # ---- Housekeeping -----------------------------------------------------------
