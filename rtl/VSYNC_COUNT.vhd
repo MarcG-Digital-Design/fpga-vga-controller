@@ -18,7 +18,7 @@ begin
 	 process(CLK)
     begin
         if rising_edge(CLK) then
-            if nRST = '0' then -- Correction : passage à '0' (actif bas) et ajout du 'then'
+            if nRST = '0' then 
                 signal_count <= (others => '0');
             elsif HCOUNT_OVERFLOW = '1' then
                 if signal_count = 524 then

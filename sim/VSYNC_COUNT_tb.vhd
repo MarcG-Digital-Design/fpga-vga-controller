@@ -2,36 +2,74 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity VSYNC_COUNT is
-    Port (
-        CLK              : in  STD_LOGIC;
-        nRST             : in  STD_LOGIC;
-        HCOUNT_OVERFLOW  : in  STD_LOGIC;
-        VCOUNTER_VALUE   : out STD_LOGIC_VECTOR(9 downto 0)
-    );
-end VSYNC_COUNT;
+-- Manual testbench for VSYNC_COUNT.
+-- Generates CLK, asserts nRST low for a few cycles, then drives
+-- HCOUNT_OVERFLOW pulses so the V counter can be observed in GTKWave.
+entity VSYNC_COUNT_tb is
+end VSYNC_COUNT_tb;
 
-architecture Behavioral of VSYNC_COUNT is
-    signal signal_vcount : UNSIGNED(9 downto 0) := (others => '0');
+architecture sim of VSYNC_COUNT_tb is
+
+    component VSYNC_COUNT
+        Port (
+            CLK              : in  STD_LOGIC;
+            nRST             : in  STD_LOGIC;
+            HCOUNT_OVERFLOW  : in  STD_LOGIC;
+            VCOUNTER_VALUE   : out STD_LOGIC_VECTOR(9 downto 0)
+        );
+    end component;
+
+    -- 25 MHz pixel clock -> 40 ns period
+    constant CLK_PERIOD : time := 40 ns;
+
+    signal CLK             : STD_LOGIC := '0';
+    signal nRST            : STD_LOGIC := '0';   -- start asserted (active low)
+    signal HCOUNT_OVERFLOW : STD_LOGIC := '0';
+    signal VCOUNTER_VALUE  : STD_LOGIC_VECTOR(9 downto 0);
+
+    signal sim_done : boolean := false;
+
 begin
 
-    process(CLK)
+    DUT : VSYNC_COUNT
+        port map (
+            CLK             => CLK,
+            nRST            => nRST,
+            HCOUNT_OVERFLOW => HCOUNT_OVERFLOW,
+            VCOUNTER_VALUE  => VCOUNTER_VALUE
+        );
+
+    -- Free-running clock
+    clk_process : process
     begin
-        if rising_edge(CLK) then
-            if nRST = '0' then
-                signal_vcount <= (others => '0');
-            
-            -- Increment only when horizontal line is finished (Clock Enable)
-            elsif HCOUNT_OVERFLOW = '1' then 
-                if signal_vcount = 524 then
-                    signal_vcount <= (others => '0');
-                else
-                    signal_vcount <= signal_vcount + 1;
-                end if;
-            end if;
-        end if;
+        while not sim_done loop
+            CLK <= '0';
+            wait for CLK_PERIOD / 2;
+            CLK <= '1';
+            wait for CLK_PERIOD / 2;
+        end loop;
+        wait;
     end process;
 
-    VCOUNTER_VALUE <= STD_LOGIC_VECTOR(signal_vcount);
+    -- Stimulus
+    stim_process : process
+    begin
+        -- Hold reset low for 4 clock cycles, then release
+        wait for CLK_PERIOD * 4;
+        nRST <= '1';
+        wait for CLK_PERIOD * 2;
 
-end Behavioral;
+        -- 600 line pulses to cross the 524 -> 0 wrap and beyond
+        for i in 0 to 599 loop
+            wait until rising_edge(CLK);
+            HCOUNT_OVERFLOW <= '1';
+            wait until rising_edge(CLK);
+            HCOUNT_OVERFLOW <= '0';
+            wait for CLK_PERIOD * 6;
+        end loop;
+
+        sim_done <= true;
+        wait;
+    end process;
+
+end sim;
