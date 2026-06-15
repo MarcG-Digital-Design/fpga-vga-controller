@@ -19,6 +19,10 @@ The image is pre-processed in MATLAB, converted into a 12-bit `.mif` file, and l
 
 ## Architecture
 
+<p align="center">
+  <img src="doc/main_architecture.png" alt="Main Architecture FPGA" width="600"/>
+</p>
+
 **Memory Management**
 The image data is converted into a `.mif` file (Memory Initialization File) and mapped into the FPGA's internal ROM. A 16-bit address bus is built by concatenating the horizontal and vertical pixel counters, with an offset applied to center the 256×256 image on the 640×480 display.
 
