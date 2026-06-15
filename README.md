@@ -65,20 +65,20 @@ Pixel data is read synchronously from the ROM using the active display coordinat
 The repository already ships with a generated `.mif`. To use your own image, run the MATLAB converter:
 
 ```matlab
-bmp_to_mif('your_image.bmp');
+use matlab to convert 256*256 in mif WIP !!
 ```
 
 This produces a 12-bit `.mif` (256×256) ready to be loaded into the ROM.
 
 ### 2. Build and program
 
-```text
+```text WI !!!!! 
 1. Open the project (.qpf) in Quartus Prime.
 2. Run Analysis & Synthesis, then full compilation.
--- 3. make pin assignment file 
-3. Connect the DE10-Lite via USB-Blaster.
-4. Open the Programmer and load the bitstream onto the FPGA.
-5. Connect a VGA monitor — the image appears on screen.
+4. make pin assignment file 
+5. Connect the DE10-Lite via USB-Blaster.
+6. Open the Programmer and load the bitstream onto the FPGA.
+7. Connect a VGA monitor — the image appears on screen.
 ```
 
 
