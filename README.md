@@ -17,6 +17,17 @@ The image is pre-processed in MATLAB, converted into a 12-bit `.mif` file, and l
 
 ---
 
+## Repository Structure
+
+```
+fpga-vga-controller/
+├── rtl/        # VHDL source files
+├── sim/        # Simulation testbenches
+├── mif/        # Memory initialization files
+├── scripts/    # MATLAB image conversion script (BMP → MIF)
+└── doc/        # Project report and hardware validation photos
+```
+
 ## Architecture
 Here is the detailed design of my architecture. A `PLL_25MHz` block derives the 25 MHz pixel clock from the on-board `MAX10_CLK1_50` oscillator, which clocks the entire controller. Two counters, `HSYNC_COUNT` and `VSYNC_COUNT`, scan the 800×524 raster and together act as the current `(X, Y)` screen coordinate: `HSYNC_COUNT` increments every clock cycle and emits `HCOUNT_OVERFLOW` at the end of each line, which in turn clocks `VSYNC_COUNT` down one line. These coordinates feed three comparators — `COMPARATOR_HSYNC`, `COMPARATOR_VSYNC`, and `COMPARATOR_TDISP` — which generate `H_SYNC`, `V_SYNC`, and the active `DISPLAY_SIGNAL` indicating when the current pixel falls inside the visible 640×480 window. The same coordinates form the `ADDRESS[15:0]` bus that addresses the on-chip RAM, initialized at synthesis from a `.mif` file containing the image. The returned `DATA[11:0]` is forwarded to `RGB_OUTPUT`, which gates it with `DISPLAY_SIGNAL` and drives `VGA_R[3:0]`, `VGA_G[3:0]`, and `VGA_B[3:0]` to the resistor-ladder DAC during the active window — and forces them to zero during blanking, as required by the VGA standard for the monitor to lock its sync.
 
@@ -39,17 +50,6 @@ Custom timing generator producing HSYNC, VSYNC and DISPLAY_SIGNAL signals — no
 Pixel data is read synchronously from the ROM using the active display coordinates (H_count, V_count) and sent to the 12-bit resistor-ladder VGA DAC on the board.
 
 ---
-
-## Repository Structure
-
-```
-fpga-vga-controller/
-├── rtl/        # VHDL source files
-├── sim/        # Simulation testbenches
-├── mif/        # Memory initialization files
-├── scripts/    # MATLAB image conversion script (BMP → MIF)
-└── doc/        # Project report and hardware validation photos
-```
 
 ## Getting Started
 
