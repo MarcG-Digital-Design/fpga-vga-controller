@@ -25,7 +25,7 @@ Here is the detailed design of my architecture. A `PLL_25MHz` block derives the 
 </p>
 
 **Memory Management**
-The image data is converted into a `.mif` file (Memory Initialization File) and mapped into the FPGA's internal ROM. A 16-bit address bus is built by concatenating the horizontal and vertical pixel counters, with an offset applied to center the 256×256 image on the 640×480 display.
+The image data is converted into a `.mif` file (Memory Initialization File) and mapped into the FPGA's internal RAM. A 16-bit address bus is built by concatenating the horizontal and vertical pixel counters, with an offset applied to center the 256×256 image on the 640×480 display.
 
 **VGA Timing**
 Custom timing generator producing HSYNC, VSYNC and DISPLAY_SIGNAL signals — no external IP used. Clocked at 25 MHz (derived from the 50 MHz system clock via PLL).
