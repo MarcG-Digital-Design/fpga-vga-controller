@@ -55,7 +55,7 @@ fpga-vga-controller/
 
 ### Prerequisites
 
-- **Intel Quartus Prime** <!-- TODO: add the version you used, e.g. 22.1 Lite Edition -->
+- **Intel Quartus Prime** <!-- QUARTUS PRIME 25.1 USED -->
 - **Intel DE10-Lite** board (MAX10 `10M50DAF484C7G`)
 - **MATLAB** (for regenerating the image `.mif`)
 - A VGA monitor + VGA cable
@@ -65,7 +65,6 @@ fpga-vga-controller/
 The repository already ships with a generated `.mif`. To use your own image, run the MATLAB converter:
 
 ```matlab
-% TODO: replace with your actual script name / signature
 bmp_to_mif('your_image.bmp');
 ```
 
@@ -78,11 +77,10 @@ This produces a 12-bit `.mif` (256×256) ready to be loaded into the ROM.
 2. Run Analysis & Synthesis, then full compilation.
 -- 3. make pin assignment file 
 3. Connect the DE10-Lite via USB-Blaster.
-4. Open the Programmer and load the .sof onto the FPGA.
+4. Open the Programmer and load the bitstream onto the FPGA.
 5. Connect a VGA monitor — the image appears on screen.
 ```
 
----
 
 ## Skills
 
