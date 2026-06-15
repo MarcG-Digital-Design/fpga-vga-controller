@@ -52,7 +52,7 @@ begin
         wait for CLK_PERIOD * 2;
 
 
-        wait for CLK_PERIOD * 400;
+        wait for CLK_PERIOD * 4000;
         nRST <= '0';
 
         sim_done <= true;
