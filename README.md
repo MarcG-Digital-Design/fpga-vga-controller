@@ -13,7 +13,7 @@ A custom VGA controller implemented in VHDL on an Intel DE10-Lite (MAX10) FPGA â
 
 The goal of this project was to design a VGA controller from scratch, covering the full RTL cycle: architecture definition, VHDL implementation, simulation with testbenches, and real hardware validation.
 
-The image is pre-processed in MATLAB, converted into a 12-bit `.mif` file, and loaded into the FPGA's internal ROM at synthesis time.
+The image is pre-processed in MATLAB, converted into a 12-bit `.mif` file, and loaded into the FPGA's internal BRAM  (Block RAM) at synthesis time.
 
 ---
 
