@@ -31,19 +31,6 @@ constant CLK_PERIOD : time := 40 ns;   -- 25 MHz pixel clock
     signal sim_done : boolean := false;
 
 
-    
-    procedure check_point(h : integer; v : integer; expected : STD_LOGIC; tag : string) is
-    begin
-        HCOUNTER_VALUE <= std_logic_vector(to_unsigned(h, 10));
-        VCOUNTER_VALUE <= std_logic_vector(to_unsigned(v, 10));
-        wait until rising_edge(CLK);
-        wait for 1 ns;
-        assert DISPLAY_SIGNAL = expected
-            report "DISPLAY FAIL [" & tag & "] at (" &
-                integer'image(h) & "," & integer'image(v) & ")"
-            severity failure;
-    end procedure;
-
 
 begin
 
@@ -69,7 +56,18 @@ begin
     end process;
 
     stim_process : process
-    
+	-- checking procedure
+    	procedure check_point(h : integer; v : integer; expected : STD_LOGIC; tag : string) is
+    	begin
+        	HCOUNTER_VALUE <= std_logic_vector(to_unsigned(h, 10));
+        	VCOUNTER_VALUE <= std_logic_vector(to_unsigned(v, 10));
+        	wait until rising_edge(CLK);
+        	wait for 1 ns;
+        	assert DISPLAY_SIGNAL = expected
+            	report "DISPLAY FAIL [" & tag & "] at (" &
+                	integer'image(h) & "," & integer'image(v) & ")"
+            	severity failure;
+    	end procedure;
     begin
         -- Phase 1 Reset
         wait for CLK_PERIOD * 4;
