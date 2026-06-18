@@ -92,6 +92,7 @@ begin
         check_point(400, 512, '0', "just below");
         check_point(  0,   0, '0', "origin");
         check_point(799, 524, '0', "bottom-right blanking");
+	check_point(784, 31, '1', "top-right corner");
 
         -- PHASE 3 : reset in the middle
         nRST <= '0';
