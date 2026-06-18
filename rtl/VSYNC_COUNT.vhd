@@ -5,7 +5,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity VSYNC_COUNT is
     Port (
         CLK              : in  STD_LOGIC;
-	nRST		 : in STD_LOGIC;
+	    nRST		     : in STD_LOGIC;
         HCOUNT_OVERFLOW  : in  STD_LOGIC;
         VCOUNTER_VALUE   : out STD_LOGIC_VECTOR(9 downto 0)
     );

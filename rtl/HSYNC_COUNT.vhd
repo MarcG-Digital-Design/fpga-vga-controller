@@ -5,7 +5,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity HSYNC_COUNT is
     Port (
         CLK              : in  STD_LOGIC;
-	nRST             : in  STD_LOGIC;
+	    nRST             : in  STD_LOGIC;
         HCOUNT_OVERFLOW  : out  STD_LOGIC;
         HCOUNTER_VALUE   : out STD_LOGIC_VECTOR(9 downto 0)
     );
