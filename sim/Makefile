@@ -50,7 +50,12 @@ wavehsync:
 	$(GHDL) -r $(GHDLFLAGS) HSYNC_COUNT_tb --vcd=hsync.vcd --stop-time=1ms
 	gtkwave hsync.vcd
 
-# ---- Housekeeping -----------------------------------------------------------
+# ---- COMPARATOR_TDISP-----------------------------------------------------------
+testtdisp:
+	$(GHDL) -a $(GHDLFLAGS) $(RTL)/COMPARATOR_TDISP.vhd $(SIM)/COMPARATOR_TDISP_selfcheck_tb.vhd
+	$(GHDL) -e $(GHDLFLAGS) COMPARATOR_TDISP_selfcheck_tb
+	$(GHDL) -r $(GHDLFLAGS) COMPARATOR_TDISP_selfcheck_tb --assert-level=error
+
 clean:
 	$(GHDL) --remove
 	rm -f *.vcd
