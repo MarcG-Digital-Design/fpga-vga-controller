@@ -7,6 +7,7 @@
 #   make wavehsync   -> HSYNC_COUNT manual testbench + GTKWave
 #   make testtdisp   -> COMPARATOR_TDISP self-checking testbench (PASS/FAIL)
 #   make testhcmp    -> COMPARATOR_HSYNC self-checking testbench (PASS/FAIL)
+#   make testvcmp    -> COMPARATOR_VSYNC self-checking testbench (PASS/FAIL)
 #   make test        -> run every self-checking testbench
 #   make clean       -> remove generated files
 #
@@ -22,7 +23,7 @@ SIM       := .
 all: test
 
 # Aggregate self-check target (handy for CI)
-test: testvsync testhsync testtdisp testhcmp 
+test: testvsync testhsync testtdisp testhcmp testvcmp
 
 # ---- VSYNC_COUNT ------------------------------------------------------------
 # Self-checking test (Etape B)
@@ -39,13 +40,13 @@ wavevsync:
 	gtkwave vsync.vcd
 
 # ---- HSYNC_COUNT ------------------------------------------------------------
-# Self-checking test (Etape B)
+# Self-checking test
 testhsync:
 	$(GHDL) -a $(GHDLFLAGS) $(RTL)/HSYNC_COUNT.vhd $(SIM)/HSYNC_COUNT_selfcheck_tb.vhd
 	$(GHDL) -e $(GHDLFLAGS) HSYNC_COUNT_selfcheck_tb
 	$(GHDL) -r $(GHDLFLAGS) HSYNC_COUNT_selfcheck_tb --assert-level=error
 
-# Manual waveform inspection (Etape A)
+# Manual waveform inspection 
 wavehsync:
 	$(GHDL) -a $(GHDLFLAGS) $(RTL)/HSYNC_COUNT.vhd $(SIM)/HSYNC_COUNT_tb.vhd
 	$(GHDL) -e $(GHDLFLAGS) HSYNC_COUNT_tb
@@ -64,9 +65,15 @@ testhcmp:
 	$(GHDL) -e $(GHDLFLAGS) COMPARATOR_HSYNC_selfcheck_tb
 	$(GHDL) -r $(GHDLFLAGS) COMPARATOR_HSYNC_selfcheck_tb --assert-level=error
 
+# ---- COMPARATOR_VSYNC ------------------------------------------------------
+testvcmp:
+	$(GHDL) -a $(GHDLFLAGS) $(RTL)/COMPARATOR_VSYNC.vhd $(SIM)/COMPARATOR_VSYNC_selfcheck_tb.vhd
+	$(GHDL) -e $(GHDLFLAGS) COMPARATOR_VSYNC_selfcheck_tb
+	$(GHDL) -r $(GHDLFLAGS) COMPARATOR_VSYNC_selfcheck_tb --assert-level=error
+
 
 clean:
 	$(GHDL) --remove
 	rm -f *.vcd
 
-.PHONY: all test testvsync wavevsync testhsync wavehsync testtdisp  testhcmp clean
+.PHONY: all test testvsync wavevsync testhsync wavehsync testtdisp  testhcmp testvcmp clean
