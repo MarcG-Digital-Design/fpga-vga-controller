@@ -23,7 +23,7 @@ architecture behavior of VGA_DISPLAY_RAM_selfcheck_tb is
         );
         Port (
             MAX10_CLK1_50 : in  STD_LOGIC;
-            KEY0          : in  STD_LOGIC;
+            KEY           : in  STD_LOGIC_VECTOR(1 downto 0);
             VGA_R         : out STD_LOGIC_VECTOR(3 downto 0);
             VGA_G         : out STD_LOGIC_VECTOR(3 downto 0);
             VGA_B         : out STD_LOGIC_VECTOR(3 downto 0);
@@ -34,7 +34,8 @@ architecture behavior of VGA_DISPLAY_RAM_selfcheck_tb is
 
     -- Stimulus signals (inputs)
     signal MAX10_CLK1_50 : STD_LOGIC := '0';
-    signal KEY0          : STD_LOGIC := '0';   -- active low : '0' = reset asserted
+    -- KEY is active low : "00" = both buttons pressed = reset asserted
+    signal KEY           : STD_LOGIC_VECTOR(1 downto 0) := "00";
 
     -- Observed signals (outputs)
     signal VGA_R  : STD_LOGIC_VECTOR(3 downto 0);
@@ -59,7 +60,7 @@ begin
     uut : VGA_DISPLAY_RAM
         port map (
             MAX10_CLK1_50 => MAX10_CLK1_50,
-            KEY0          => KEY0,
+            KEY           => KEY,
             VGA_R         => VGA_R,
             VGA_G         => VGA_G,
             VGA_B         => VGA_B,
@@ -100,12 +101,12 @@ begin
     begin
         report "--- STARTING VGA_DISPLAY_RAM SIMULATION ---" severity note;
 
-        -- 1. Reset asserted (KEY0 = '0' = button pressed)
-        KEY0 <= '0';
+        -- 1. Reset asserted (KEY[0] = '0' = button pressed)
+        KEY <= "00";
         wait for CLK50_PERIOD * 10;
 
-        -- 2. Release reset
-        KEY0 <= '1';
+        -- 2. Release reset (KEY[0] = '1' = button released)
+        KEY <= "11";
         wait for CLK50_PERIOD * 4;
         report "Reset released. VGA counters should start." severity note;
 

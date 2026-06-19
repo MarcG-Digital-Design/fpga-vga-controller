@@ -45,7 +45,7 @@ entity VGA_DISPLAY_RAM is
     );
     Port (
         MAX10_CLK1_50 : in  STD_LOGIC;
-        KEY0          : in  STD_LOGIC;
+        KEY           : in  STD_LOGIC_VECTOR(1 downto 0);
         VGA_R         : out STD_LOGIC_VECTOR(3 downto 0);
         VGA_G         : out STD_LOGIC_VECTOR(3 downto 0);
         VGA_B         : out STD_LOGIC_VECTOR(3 downto 0);
@@ -177,7 +177,7 @@ begin
     u_hsync_count : HSYNC_COUNT
         port map (
             CLK             => clk_25mhz,
-            nRST            => KEY0,
+            nRST            => KEY(0),
             HCOUNT_OVERFLOW => s_HCOUNT_OVERFLOW,
             HCOUNTER_VALUE  => s_HCOUNTER_VALUE
         );
@@ -186,7 +186,7 @@ begin
     u_vsync_count : VSYNC_COUNT
         port map (
             CLK             => clk_25mhz,
-            nRST            => KEY0,
+            nRST            => KEY(0),
             HCOUNT_OVERFLOW => s_HCOUNT_OVERFLOW,
             VCOUNTER_VALUE  => s_VCOUNTER_VALUE
         );
@@ -195,7 +195,7 @@ begin
     u_comp_hsync : COMPARATOR_HSYNC
         port map (
             CLK             => clk_25mhz,
-            nRST            => KEY0,
+            nRST            => KEY(0),
             HCOUNTER_VALUE  => s_HCOUNTER_VALUE,
             H_SYNC          => VGA_HS
         );
@@ -204,7 +204,7 @@ begin
     u_comp_vsync : COMPARATOR_VSYNC
         port map (
             CLK             => clk_25mhz,
-            nRST            => KEY0,
+            nRST            => KEY(0),
             VCOUNTER_VALUE  => s_VCOUNTER_VALUE,
             V_SYNC          => VGA_VS
         );
@@ -213,7 +213,7 @@ begin
     u_comp_tdisp : COMPARATOR_TDISP
         port map (
             CLK             => clk_25mhz,
-            nRST            => KEY0,
+            nRST            => KEY(0),
             HCOUNTER_VALUE  => s_HCOUNTER_VALUE,
             VCOUNTER_VALUE  => s_VCOUNTER_VALUE,
             DISPLAY_SIGNAL  => s_DISPLAY_SIGNAL
@@ -230,7 +230,7 @@ begin
         )
         port map (
             CLK             => clk_25mhz,
-            nRST            => KEY0,
+            nRST            => KEY(0),
             DISPLAY_SIGNAL  => s_DISPLAY_SIGNAL,
             HCOUNTER_VALUE  => s_HCOUNTER_VALUE,
             VCOUNTER_VALUE  => s_VCOUNTER_VALUE,
