@@ -80,12 +80,15 @@ testrgboutput:
 	$(GHDL) -r $(GHDLFLAGS) RGB_OUTPUT_selfcheck_tb --assert-level=error
 
 # ---- VGA_DISPLAY_RAM (top-level integration test) -------------------------
-# Runs the full top with a mock RAM, simulates a bit over one frame (~17 ms)
-# and checks that HSYNC and VSYNC pulse at the expected rate.
+# Runs the full synthesis top with a behavioural mock of the Quartus IP_ROM
+# (sim/IP_ROM.vhd) and the clk_divider, simulates a bit over one frame
+# (~17 ms) and checks that HSYNC and VSYNC pulse at the expected rate.
 testtop:
 	$(GHDL) -a $(GHDLFLAGS) $(RTL)/HSYNC_COUNT.vhd $(RTL)/VSYNC_COUNT.vhd \
 	                        $(RTL)/COMPARATOR_HSYNC.vhd $(RTL)/COMPARATOR_VSYNC.vhd \
 	                        $(RTL)/COMPARATOR_TDISP.vhd $(RTL)/RGB_OUTPUT.vhd \
+	                        $(RTL)/clk_divider.vhd \
+	                        $(SIM)/IP_ROM.vhd \
 	                        $(RTL)/VGA_DISPLAY_RAM.vhd \
 	                        $(SIM)/VGA_DISPLAY_RAM_selfcheck_tb.vhd
 	$(GHDL) -e $(GHDLFLAGS) VGA_DISPLAY_RAM_selfcheck_tb
