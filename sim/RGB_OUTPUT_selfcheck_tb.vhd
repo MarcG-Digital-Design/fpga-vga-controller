@@ -84,44 +84,6 @@ architecture sim of RGB_OUTPUT_selfcheck_tb is
         12 => x"D00", 13 => x"E00", 14 => x"F00", 15 => x"FFF"   -- row 3
     );
 
-    -- ---------------------------------------------------------------------
-    -- Checking procedure : drive H,V,DISPLAY, wait for the DUT latency,
-    -- then compare VGA_R/G/B against the expected values.
-    -- ---------------------------------------------------------------------
-    procedure check_pixel(
-        h : integer; v : integer; disp : STD_LOGIC;
-        exp_r : integer; exp_g : integer; exp_b : integer;
-        tag : string
-    ) is
-    begin
-        HCOUNTER_VALUE <= std_logic_vector(to_unsigned(h, 10));
-        VCOUNTER_VALUE <= std_logic_vector(to_unsigned(v, 10));
-        DISPLAY_SIGNAL <= disp;
-
-        -- Latency : 2 cycles for VGA to reflect the new DATA
-        wait until rising_edge(CLK);   -- cycle 1 : DUT computes ADDRESS
-        wait until rising_edge(CLK);   -- cycle 2 : DATA propagates to VGA
-        wait for 1 ns;
-
-        assert to_integer(unsigned(VGA_R)) = exp_r
-            report "VGA_R FAIL [" & tag & "] expected " &
-                   integer'image(exp_r) & " got " &
-                   integer'image(to_integer(unsigned(VGA_R)))
-            severity failure;
-
-        assert to_integer(unsigned(VGA_G)) = exp_g
-            report "VGA_G FAIL [" & tag & "] expected " &
-                   integer'image(exp_g) & " got " &
-                   integer'image(to_integer(unsigned(VGA_G)))
-            severity failure;
-
-        assert to_integer(unsigned(VGA_B)) = exp_b
-            report "VGA_B FAIL [" & tag & "] expected " &
-                   integer'image(exp_b) & " got " &
-                   integer'image(to_integer(unsigned(VGA_B)))
-            severity failure;
-    end procedure;
-
 begin
 
     -- Mock RAM : combinational read, DATA tracks ADDRESS with no delay
@@ -160,6 +122,46 @@ begin
     end process;
 
     stim_process : process
+
+        -- Checking procedure : drive H,V,DISPLAY, wait for the DUT latency,
+        -- then compare VGA_R/G/B against the expected values.
+        -- Declared inside the process so the procedure inherits the process
+        -- driver for the signals it writes to (HCOUNTER_VALUE, VCOUNTER_VALUE,
+        -- DISPLAY_SIGNAL).
+        procedure check_pixel(
+            h : integer; v : integer; disp : STD_LOGIC;
+            exp_r : integer; exp_g : integer; exp_b : integer;
+            tag : string
+        ) is
+        begin
+            HCOUNTER_VALUE <= std_logic_vector(to_unsigned(h, 10));
+            VCOUNTER_VALUE <= std_logic_vector(to_unsigned(v, 10));
+            DISPLAY_SIGNAL <= disp;
+
+            -- Latency : 2 cycles for VGA to reflect the new DATA
+            wait until rising_edge(CLK);   -- cycle 1 : DUT computes ADDRESS
+            wait until rising_edge(CLK);   -- cycle 2 : DATA propagates to VGA
+            wait for 1 ns;
+
+            assert to_integer(unsigned(VGA_R)) = exp_r
+                report "VGA_R FAIL [" & tag & "] expected " &
+                       integer'image(exp_r) & " got " &
+                       integer'image(to_integer(unsigned(VGA_R)))
+                severity failure;
+
+            assert to_integer(unsigned(VGA_G)) = exp_g
+                report "VGA_G FAIL [" & tag & "] expected " &
+                       integer'image(exp_g) & " got " &
+                       integer'image(to_integer(unsigned(VGA_G)))
+                severity failure;
+
+            assert to_integer(unsigned(VGA_B)) = exp_b
+                report "VGA_B FAIL [" & tag & "] expected " &
+                       integer'image(exp_b) & " got " &
+                       integer'image(to_integer(unsigned(VGA_B)))
+                severity failure;
+        end procedure;
+
     begin
 
         -- PHASE 1 : reset asserted -> output forced to 0
