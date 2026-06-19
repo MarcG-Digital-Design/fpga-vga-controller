@@ -2,11 +2,22 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- Self-checking testbench for VGA_DISPLAY_RAM
-entity VGA_DISPLAY_RAM__selfcheck_tb is
-end VGA_DISPLAY_RAM__selfcheck_tb;
+-- Integration testbench for VGA_DISPLAY_RAM.
+-- Smoke-test level : verifies that the top wires the 6 sub-modules
+-- correctly and that the VGA timing signals pulse at the expected rate.
+--
+-- The test runs slightly longer than one full VGA frame (~16.7 ms) and
+-- checks :
+--   * RAM_ADDR is 0 while reset is asserted (warning)
+--   * VGA_HS pulses at least 500 times in one frame (525 lines expected)
+--   * VGA_VS pulses at least once per frame
+--
+-- Per-pixel image content is NOT checked here : that is covered by the
+-- RGB_OUTPUT unit testbench and ultimately validated on a real VGA screen.
+entity VGA_DISPLAY_RAM_selfcheck_tb is
+end VGA_DISPLAY_RAM_selfcheck_tb;
 
-architecture behavior of VGA_DISPLAY_RAM__selfcheck_tb is
+architecture behavior of VGA_DISPLAY_RAM_selfcheck_tb is
 
     -- Component Declaration for the Unit Under Test (UUT)
     component VGA_DISPLAY_RAM
@@ -47,6 +58,10 @@ architecture behavior of VGA_DISPLAY_RAM__selfcheck_tb is
     -- Simulation flag to gracefully stop the clock generator
     signal sim_done : boolean := false;
 
+    -- Counters used to verify HSYNC and VSYNC pulse activity
+    signal hs_count : integer := 0;
+    signal vs_count : integer := 0;
+
 begin
 
     -- Instantiate the Unit Under Test (UUT)
@@ -84,6 +99,22 @@ begin
         RAM_DATA <= RAM_ADDR(11 downto 0);
     end process;
 
+    -- Count falling edges of VGA_HS (one pulse per scanline, active low)
+    hs_counter : process(VGA_HS)
+    begin
+        if falling_edge(VGA_HS) then
+            hs_count <= hs_count + 1;
+        end if;
+    end process;
+
+    -- Count falling edges of VGA_VS (one pulse per frame, active low)
+    vs_counter : process(VGA_VS)
+    begin
+        if falling_edge(VGA_VS) then
+            vs_count <= vs_count + 1;
+        end if;
+    end process;
+
     -- Main stimulus and self-check process
     stim_proc : process
     begin
@@ -96,8 +127,8 @@ begin
         -- 2. Self-check: Ensure address is explicitly 0 during reset
         -- Note: Depending on internal logic, some designs let the address float ('U') during reset.
         -- We assert a warning here rather than an error if it fails, to just flag it.
-        assert (unsigned(RAM_ADDR) = 0) 
-            report "[WARNING] RAM_ADDR is not driven to 0 during reset." 
+        assert (unsigned(RAM_ADDR) = 0)
+            report "[WARNING] RAM_ADDR is not driven to 0 during reset."
             severity warning;
 
         -- 3. Release reset and start the system
@@ -105,23 +136,27 @@ begin
         wait for CLK_PERIOD * 2;
         report "Reset released. VGA counters should start." severity note;
 
-        -- 4. Wait for slightly more than one full horizontal line (Standard VGA is 800 clock cycles per line)
-        -- 850 cycles * 40 ns = 34000 ns
-        wait for 34000 ns;
+        -- 4. Run a bit more than one full frame (~16.7 ms) so VS pulses at least once
+        wait for 17 ms;
 
-        -- 5. Self-check: Ensure H_SYNC generated a pulse (toggled)
-        -- This verifies the horizontal counter and comparator are alive
-        assert (VGA_HS'active) 
-            report "[ERROR] VGA_HS did not toggle! Horizontal counter might be stuck." 
-            severity error;
+        -- 5. After one full frame, expect at least:
+        --      - 500 horizontal sync pulses (525 lines per frame, allow margin)
+        --      - 1 vertical sync pulse
+        assert hs_count >= 500
+            report "[ERROR] Not enough HSYNC pulses: got " & integer'image(hs_count)
+            severity failure;
 
-        -- 6. Let the simulation run to capture part of the vertical progression
-        -- (To simulate a full frame to see V_SYNC toggle, you would need to wait ~ 16.7 ms)
-        wait for 100000 ns;
+        assert vs_count >= 1
+            report "[ERROR] VSYNC never pulsed during one full frame"
+            severity failure;
+
+        report "Counters OK : HS = " & integer'image(hs_count) &
+               " , VS = " & integer'image(vs_count)
+            severity note;
 
         report "--- SIMULATION COMPLETED SUCCESSFULLY (Basic checks passed) ---" severity note;
 
-        -- 7. End the simulation
+        -- 6. End the simulation
         sim_done <= true;
         wait;
     end process;
