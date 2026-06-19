@@ -8,6 +8,7 @@
 #   make testtdisp   -> COMPARATOR_TDISP self-checking testbench (PASS/FAIL)
 #   make testhcmp    -> COMPARATOR_HSYNC self-checking testbench (PASS/FAIL)
 #   make testvcmp    -> COMPARATOR_VSYNC self-checking testbench (PASS/FAIL)
+#   make testrgboutput -> RGB_OUTPUT self-checking testbench (PASS/FAIL)
 #   make test        -> run every self-checking testbench
 #   make clean       -> remove generated files
 #
@@ -23,7 +24,7 @@ SIM       := .
 all: test
 
 # Aggregate self-check target (handy for CI)
-test: testvsync testhsync testtdisp testhcmp testvcmp
+test: testvsync testhsync testtdisp testhcmp testvcmp testrgboutput
 
 # ---- VSYNC_COUNT ------------------------------------------------------------
 # Self-checking test (Etape B)
@@ -71,9 +72,15 @@ testvcmp:
 	$(GHDL) -e $(GHDLFLAGS) COMPARATOR_VSYNC_selfcheck_tb
 	$(GHDL) -r $(GHDLFLAGS) COMPARATOR_VSYNC_selfcheck_tb --assert-level=error
 
+# ---- RGB_OUTPUT ------------------------------------------------------
+testrgboutput:
+	$(GHDL) -a $(GHDLFLAGS) $(RTL)/RGB_OUTPUT.vhd $(SIM)/RGB_OUTPUT_selfcheck_tb.vhd
+	$(GHDL) -e $(GHDLFLAGS) RGB_OUTPUT_selfcheck_tb
+	$(GHDL) -r $(GHDLFLAGS) RGB_OUTPUT_selfcheck_tb --assert-level=error
+
 
 clean:
 	$(GHDL) --remove
 	rm -f *.vcd
 
-.PHONY: all test testvsync wavevsync testhsync wavehsync testtdisp  testhcmp testvcmp clean
+.PHONY: all test testvsync wavevsync testhsync wavehsync testtdisp  testhcmp testvcmp testrgboutput clean
