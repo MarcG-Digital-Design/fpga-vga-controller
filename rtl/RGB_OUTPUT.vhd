@@ -1,15 +1,20 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-use IEEE.MATH_REAL.ALL;
 
 
 entity RGB_OUTPUT is
 
+    -- NOTE : Quartus does NOT allow referencing one generic from the default
+    -- expression of another generic in the same interface list (it is a
+    -- VHDL-2008 feature that the Quartus 18.1 analyzer rejects).
+    -- ADDR_BITS is therefore exposed as a plain parameter ; the caller
+    -- (TOP_QUARTUS or the testbench) is responsible for passing a value
+    -- consistent with IMG_WIDTH * IMG_HEIGHT.
     generic(
-        IMG_WIDTH  : integer := 256;  -- img  size
-        IMG_HEIGHT  : integer := 256; -- img  size
-        ADDR_BITS  : integer := integer(ceil(log2(real(IMG_WIDTH * IMG_HEIGHT))))
+        IMG_WIDTH  : integer := 256;  -- img width  in pixels
+        IMG_HEIGHT : integer := 256;  -- img height in pixels
+        ADDR_BITS  : integer := 16    -- log2(IMG_WIDTH * IMG_HEIGHT), set by the caller
     );
 
     Port (
