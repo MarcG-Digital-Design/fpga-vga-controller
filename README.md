@@ -64,12 +64,18 @@ Pixel data is read synchronously from the ROM using the active display coordinat
 
 The repository already ships with a generated `.mif`. To use your own image, run the MATLAB converter:
 
-```matlab
-Use MATLAB to convert a 256x256 image into a MIF file for memory initialization. >
-Currently, the script is configured to test with the image named PERROQUE_256_256.bmp. To convert a different image, you must update the image filename directly inside the MATLAB script. Additionally, the new image file must be placed in the same directory as the script.
 
-Running the script will generate a memory_init.mif file in the same folder. You will then need to load this .mif file into the ROM: 1-PORT IP core within Intel Quartus.
-```
+## Image to MIF Conversion for Memory Initialization
+
+Use the provided MATLAB script to convert a **256x256 image** into a Memory Initialization File (`.mif`).
+
+### How to Use
+1. **Test Image:** Currently, the script is configured to test with the image named `PERROQUE_256_256.bmp`.
+2. **Custom Image:** To convert a different image, update the image filename directly inside the MATLAB script variables.
+3. **File Location:** The new image file must be placed in the exact same directory as the MATLAB script.
+
+> 💡 **Next Steps in Quartus:**
+> Running the script will generate a `memory_init.mif` file in the same folder. You will then need to load this `.mif` file into your **ROM: 1-PORT** IP core within Intel Quartus to initialize the memory.
 
 This produces a 12-bit `.mif` (256×256) ready to be loaded into the ROM.
 
