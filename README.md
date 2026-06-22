@@ -65,7 +65,7 @@ Pixel data is read synchronously from the ROM using the active display coordinat
 The repository already ships with a generated `.mif`. To use your own image, run the MATLAB converter:
 
 ```matlab
-use matlab to convert 256*256 in mif WIP !!
+use matlab to convert 256*256 in mif WIP for intilization FILE MEMORY !!
 ```
 
 This produces a 12-bit `.mif` (256×256) ready to be loaded into the ROM.
