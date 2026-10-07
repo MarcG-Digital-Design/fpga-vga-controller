@@ -31,7 +31,7 @@ fpga-vga-controller/
 ## Architecture
 Here is the detailed design of the architecture. To drive the controller, a counter-based clock divider derives the 25 MHz pixel clock by halving the on-board 50 MHz `MAX10_CLK1_50` oscillator. This counter implementation was chosen to bypass integration issues encountered with the Quartus PLL IP interface. Two counters, `HSYNC_COUNT` and `VSYNC_COUNT`, scan the 800×524 raster and effectively act as the current `(X, Y)` screen coordinates. `HSYNC_COUNT` increments every pixel clock cycle and emits an `HCOUNT_OVERFLOW` signal at the end of each line, which in turn increments `VSYNC_COUNT` to move down one line. 
 
-These coordinates feed three comparators—`COMPARATOR_HSYNC`, `COMPARATOR_VSYNC`, and `COMPARATOR_TDISP`—which generate the `H_SYNC`, `V_SYNC`, and active `DISPLAY_SIGNAL` to indicate when the current pixel falls inside the visible 640×480 window. The coordinates also form the `ADDRESS[15:0]` bus that addresses the on-chip RAM, which is initialized at synthesis via a `.mif` file containing the image data. Finally, the returned `DATA[11:0]` is forwarded to the `RGB_OUTPUT` block. This block gates the data with the `DISPLAY_SIGNAL`, driving the `VGA_R[3:0]`, `VGA_G[3:0]`, and `VGA_B[3:0]` signals to the resistor-ladder DAC during the active window, while forcing them to zero during the blanking intervals. This zeroing ensures the monitor correctly locks onto the sync signals as required by the VGA standard.
+These coordinates feed three comparators for : `COMPARATOR_HSYNC`, `COMPARATOR_VSYNC`, and `COMPARATOR_TDISP` : which generate the `H_SYNC`, `V_SYNC`, and active `DISPLAY_SIGNAL` to indicate when the current pixel falls inside the visible 640×480 window. The coordinates also form the `ADDRESS[15:0]` bus that addresses the on-chip RAM, which is initialized at synthesis via a `.mif` file containing the image data. Finally, the returned `DATA[11:0]` is forwarded to the `RGB_OUTPUT` block. This block gates the data with the `DISPLAY_SIGNAL`, driving the `VGA_R[3:0]`, `VGA_G[3:0]`, and `VGA_B[3:0]` signals to the resistor-ladder DAC during the active window, while forcing them to zero during the blanking intervals. This zeroing ensures the monitor correctly locks onto the sync signals as required by the VGA standard.
 
 <p align="center">
   <img src="doc/main_architecture5.png" alt="Main Architecture FPGA" width="1000"/>
@@ -41,7 +41,7 @@ These coordinates feed three comparators—`COMPARATOR_HSYNC`, `COMPARATOR_VSYNC
 The image data is converted into a `.mif` file (Memory Initialization File) and mapped into the FPGA's internal RAM. A 16-bit address bus is built by concatenating the horizontal and vertical pixel counters, with an offset applied to center the 256×256 image on the 640×480 display.
 
 **VGA Timing**
-Custom timing generator producing HSYNC, VSYNC and DISPLAY_SIGNAL signals — no external IP used. Clocked at 25 MHz (derived from the 50 MHz system clock via PLL).
+Custom timing generator producing HSYNC, VSYNC and DISPLAY_SIGNAL signals : no external IP used. Clocked at 25 MHz (derived from the 50 MHz system clock via PLL).
 
 | | Active | Front Porch | Sync Pulse | Back Porch | Total |
 |---|---|---|---|---|---|
