@@ -1,7 +1,7 @@
 
 # FPGA VGA CONTROLLER
 
-A custom VGA controller implemented in VHDL on an Intel DE10-Lite (MAX10) FPGA — displays a static image stored in internal Block RAM at 640×480 @ 60 Hz.
+A custom VGA controller implemented in VHDL on an Intel DE10-Lite (MAX10) FPGA : displays a static image stored in internal Block RAM at 640×480 @ 60 Hz.
 
 <p align="center">
   <img src="doc/general_architecture.png" alt="General Architecture FPGA" width="600"/>
